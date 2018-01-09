@@ -10,7 +10,6 @@ import com.anysoftkeyboard.api.KeyCodes;
 import com.anysoftkeyboard.keyboards.AnyKeyboard;
 import com.anysoftkeyboard.keyboards.Keyboard;
 import com.anysoftkeyboard.test.SharedPrefsHelper;
-import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.R;
 
 import org.junit.Assert;
@@ -50,7 +49,7 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
         mAnySoftKeyboardUnderTest.simulateKeyPress(' ');
         Assert.assertEquals(expectedText + " ", inputConnection.getCurrentTextInInputConnection());
         //double space very late
-        ShadowSystemClock.sleep(AnyApplication.getConfig().getMultiTapTimeout() + 1);
+        ShadowSystemClock.sleep(SharedPrefsHelper.getPrefValue(R.string.settings_key_multitap_timeout, 1) + 1);
         mAnySoftKeyboardUnderTest.simulateKeyPress(' ');
         Assert.assertEquals(expectedText + "  ", inputConnection.getCurrentTextInInputConnection());
     }
@@ -265,8 +264,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testDeleteWholeWordWhenShiftAndBackSpaceArePressed() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
-
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -280,8 +277,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testDoesNotDeleteEntireWordWhenShiftDeleteInsideWord() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
-
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("Auto");
@@ -302,7 +297,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
     @Test
     public void testDoesNotDeleteEntireWordWhenShiftDeleteInsideWordWhenNotPredicting() {
         simulateFinishInputFlow(false);
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
 
         mAnySoftKeyboardUnderTest.getResources().getConfiguration().keyboard = Configuration.KEYBOARD_NOKEYS;
 
@@ -328,7 +322,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
     @Test
     public void testHappyPathBackWordWhenNotPredicting() {
         simulateFinishInputFlow(false);
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
 
         mAnySoftKeyboardUnderTest.getResources().getConfiguration().keyboard = Configuration.KEYBOARD_NOKEYS;
 
@@ -359,8 +352,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testHappyPathBackWordWhenPredicting() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
-
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("Auto");
@@ -386,8 +377,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testDeleteCharacterWhenNoShiftAndBackSpaceArePressed() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());//default behavior
-
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -418,7 +407,7 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
     @Test
     public void testDeleteCharacterWhenShiftAndBackSpaceArePressedAndOptionDisabled() {
         SharedPrefsHelper.setPrefsValue(R.string.settings_key_use_backword, false);
-        Assert.assertFalse(AnyApplication.getConfig().useBackword());
+
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -432,7 +421,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testDeleteCharacterWhenShiftLockedAndBackSpaceArePressed() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -455,7 +443,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testDeleteCharacterWhenShiftLockedAndHeldAndBackSpaceArePressed() {
-        Assert.assertTrue(AnyApplication.getConfig().useBackword());
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -480,7 +467,6 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
     @Test
     public void testDeleteCharacterWhenNoShiftAndBackSpaceArePressedAndOptionDisabled() {
         SharedPrefsHelper.setPrefsValue(R.string.settings_key_use_backword, false);
-        Assert.assertFalse(AnyApplication.getConfig().useBackword());
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 
         mAnySoftKeyboardUnderTest.simulateTextTyping("hello");
@@ -603,7 +589,7 @@ public class AnySoftKeyboardGimmicksTest extends AnySoftKeyboardBaseTest {
 
     @Test
     public void testLongShiftBehaviorForLetters() throws Exception {
-        final int longPressTime = AnyApplication.getConfig().getLongPressTimeout() + 20;
+        final int longPressTime = SharedPrefsHelper.getPrefValue(R.string.settings_key_long_press_timeout, 300) + 20;
 
         TestInputConnection inputConnection = getCurrentTestInputConnection();
 

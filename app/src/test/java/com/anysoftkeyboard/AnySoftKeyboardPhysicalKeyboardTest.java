@@ -10,6 +10,7 @@ import com.anysoftkeyboard.test.SharedPrefsHelper;
 import com.menny.android.anysoftkeyboard.R;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
@@ -29,13 +30,18 @@ public class AnySoftKeyboardPhysicalKeyboardTest extends AnySoftKeyboardBaseTest
         return editorInfo;
     }
 
+    @Before
+    public void setUpAndHideInput() {
+        Assert.assertFalse(getShadowInputMethodManager().isStatusIconShown());
+        simulateFinishInputFlow(false);
+    }
+
     @Test
     public void testDoesNotShowStatusBarIcon() {
         Assert.assertFalse(getShadowInputMethodManager().isStatusIconShown());
         SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), false);
+        simulateOnStartInputFlow();
         Assert.assertFalse(getShadowInputMethodManager().isStatusIconShown());
-        //will call hide with a token
-        Assert.assertNotNull(getShadowInputMethodManager().getLastStatusIconImeToken());
     }
 
     @Test
@@ -43,9 +49,8 @@ public class AnySoftKeyboardPhysicalKeyboardTest extends AnySoftKeyboardBaseTest
         SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), true);
         getShadowInputMethodManager().clearStatusIconDetails();
         SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), false);
+        simulateOnStartInputFlow();
         Assert.assertFalse(getShadowInputMethodManager().isStatusIconShown());
-        //will call hide with a token
-        Assert.assertNotNull(getShadowInputMethodManager().getLastStatusIconImeToken());
     }
 
     @Test
@@ -53,6 +58,7 @@ public class AnySoftKeyboardPhysicalKeyboardTest extends AnySoftKeyboardBaseTest
         SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), false);
         getShadowInputMethodManager().clearStatusIconDetails();
         SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), true);
+        simulateOnStartInputFlow();
         Assert.assertTrue(getShadowInputMethodManager().isStatusIconShown());
         Assert.assertNotNull(getShadowInputMethodManager().getLastStatusIconPackageName());
         //will call hide with a token
@@ -61,11 +67,11 @@ public class AnySoftKeyboardPhysicalKeyboardTest extends AnySoftKeyboardBaseTest
 
     @Test
     public void testStatusBarIconLifeCycle() {
-        SharedPrefsHelper.setPrefsValue(RuntimeEnvironment.application.getString(R.string.settings_key_keyboard_icon_in_status_bar), true);
+        SharedPrefsHelper.setPrefsValue(R.string.settings_key_keyboard_icon_in_status_bar, true);
         getShadowInputMethodManager().clearStatusIconDetails();
         EditorInfo editorInfo = createEditorInfoTextWithSuggestionsForSetUp();
         //starting with view shown (in setUp method)
-        Assert.assertTrue(getShadowInputMethodManager().isStatusIconShown());
+        Assert.assertFalse(getShadowInputMethodManager().isStatusIconShown());
         mAnySoftKeyboardUnderTest.onStartInput(editorInfo, false);
         Assert.assertTrue(getShadowInputMethodManager().isStatusIconShown());
         if (mAnySoftKeyboardUnderTest.onShowInputRequested(0, false)) {

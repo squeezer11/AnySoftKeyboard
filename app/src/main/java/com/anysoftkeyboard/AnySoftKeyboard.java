@@ -125,10 +125,6 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardWithGestureTyping {
     @NonNull
     private CharSequence mCommittedWord = "";
     /*
-     * Do we do prediction now
-     */
-    //private boolean mPredicting;
-    /*
      * is prediction needed for the current input connection
      */
     private boolean mPredictionOn;
@@ -252,7 +248,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardWithGestureTyping {
                 .asObservable().subscribe(aBoolean -> mAllowSuggestionsRestart = aBoolean));
 
         addDisposable(
-                Observable.zip(
+                Observable.combineLatest(
                         prefs().getBoolean(R.string.settings_key_show_suggestions, R.bool.settings_default_show_suggestions).asObservable(),
                         prefs().getString(R.string.settings_key_auto_pick_suggestion_aggressiveness, R.string.settings_default_auto_pick_suggestion_aggressiveness).asObservable(),
                         prefs().getInteger(R.string.settings_key_min_length_for_word_correction__, R.integer.settings_default_min_word_length_for_suggestion).asObservable(),
